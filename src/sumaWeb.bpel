@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<process
+    name="sumaWeb"
+    targetNamespace="http://enterprise.netbeans.org/bpel/sumaWeb/sumaWeb"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/sumaWeb/sumaWeb"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling">
+    <import namespace="http://enterprise.netbeans.org/bpel/WSSumaWrapper" location="WSSumaWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://services.model.suma/" location="http://hp-probook:8080/sumaWeb/WSSuma?wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="suma" xmlns:tns="http://enterprise.netbeans.org/bpel/WSSumaWrapper" partnerLinkType="tns:WSSumaLinkType" myRole="WSSumaRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SumarValoresOut" xmlns:tns="http://services.model.suma/" messageType="tns:sumarValoresResponse"/>
+        <variable name="SumarValoresIn" xmlns:tns="http://services.model.suma/" messageType="tns:sumarValores"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="suma" operation="sumarValores" xmlns:tns="http://services.model.suma/" portType="tns:WSSuma" variable="SumarValoresIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$SumarValoresIn.parameters/n1 - $SumarValoresIn.parameters/n2</from>
+                <to>$SumarValoresOut.parameters/return/res</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="suma" operation="sumarValores" xmlns:tns="http://services.model.suma/" portType="tns:WSSuma" variable="SumarValoresOut"/>
+    </sequence>
+</process>
